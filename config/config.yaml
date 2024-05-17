@@ -1,0 +1,31 @@
+project_name: 'render_db'
+
+front_only: False # For test only
+
+pt_netvlad_path: '/home/sj/workspace/paper/iccas2024/pre_trained/best_net.pth.tar'
+
+render_dataset_path: '/home/sj/workspace/paper/iccas2024/dataset/'
+
+save_db: False
+save_db_path: '/home/sj/workspace/paper/iccas2024/database/db.h5'
+
+data:
+  #### Weak supervision hyperparameters ####
+  nNegSample: 1000 
+  nNeg: 10 
+  margin: 0.5 
+
+  #### centoid caching hyperparameters ####
+  centroids:
+    nDescriptors: 50000
+    nPerImage: 100
+
+model:
+  backbone: 'vgg16'
+  encoder_dim: 512
+  num_clusters: 64
+
+hardware:
+  device: 'cuda'
+  gpu_number: 1
+  dp: False
