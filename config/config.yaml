@@ -2,12 +2,12 @@ project_name: 'render_db'
 
 front_only: False # For test only
 
-pt_netvlad_path: '/home/sj/workspace/paper/iccas2024/pre_trained/best_net.pth.tar'
+pt_netvlad_path: '../../../pre_trained/best_net.pth.tar'
 
-render_dataset_path: '/home/sj/workspace/paper/iccas2024/dataset/'
+render_dataset_path: '../../../dataset/'
 
-save_db: False
-save_db_path: '/home/sj/workspace/paper/iccas2024/database/db.h5'
+save_db: True
+save_db_path: '../../../database/db.h5'
 
 data:
   #### Weak supervision hyperparameters ####
