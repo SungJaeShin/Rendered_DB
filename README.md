@@ -24,7 +24,7 @@
 5. [OpenCV with Contrib](https://github.com/opencv/opencv)
 
 ---
-### Preparing Dataset
+### Preparing Dataset (in example folder)
 (1) cameras.txt &rarr; [IMAGE_ID, CAMERA TYPE, IMAGE Width, IMAGE HEIGHT, ~] \
 (2) images.txt &rarr; [IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, NAME] \
 (3) image folder 
