@@ -2,12 +2,30 @@ project_name: 'render_db'
 
 front_only: False # For test only
 
-pt_netvlad_path: '../../../pre_trained/best_net.pth.tar'
+pt_netvlad_path: '/home/sj/workspace/paper/iccas2024/pre_trained/netvlad.pth.tar'
 
-render_dataset_path: '../../../dataset/'
+render_dataset_path: '/home/sj/workspace/paper/iccas2024/dataset/'
 
-save_db: True
-save_db_path: '../../../database/db.h5'
+save_db: False
+save_db_path: '/home/sj/workspace/paper/iccas2024/database/db.h5'
+
+extractor_method:
+  ORB: 0
+  SIFT: 1
+  AKAZE: 2
+
+descriptor_method:
+  ORB: 0
+  SURF: 1
+  DAISY: 2
+  AKAZE: 3
+
+learning_method:
+  is_use: True
+  indoor: '/home/sj/workspace/paper/iccas2024/pre_trained/roma_indoor.pth'
+  outdoor: '/home/sj/workspace/paper/iccas2024/pre_trained/roma_outdoor.pth'
+  dinov2: '/home/sj/workspace/paper/iccas2024/pre_trained/dinov2_vitl14_pretrain.pth'
+
 
 data:
   #### Weak supervision hyperparameters ####

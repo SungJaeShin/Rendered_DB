@@ -35,7 +35,7 @@ def make_render_dataset(model, data_path, transforms=None):
             cur_img_id = get_image_id(imgs[i])
             cam_idx = find_index(cam_params, cur_img_id)
             gt_idx = find_index(gt_poses, cur_img_id)
-            print(f"cur idx: {i}, cur img idx: {cur_img_id}, cam idx: {cam_idx}, gt idx: {gt_idx}")
+            # print(f"cur idx: {i}, cur img idx: {cur_img_id}, cam idx: {cam_idx}, gt idx: {gt_idx}")
 
             cur_pil_img = Image.open(imgs[i])
             cur_tf_pil_img = transforms(cur_pil_img).unsqueeze(dim=0)

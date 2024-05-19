@@ -17,34 +17,15 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import Header
 
 # Applied NetVLAD
-from utils.tools import *
+from utils.args_utils import *
 from utils.gen_db_utils import make_render_dataset
-from utils.save_db_utils import save_render_dataset
+from utils.save_utils import save_render_dataset
+from utils.matching_utils import find_distance, calculate_score
+from utils.extractor_utils import feature_extractor, descriptor_extractor, roma_based_extractor
 from dataset.transforms import *
 from models.NetVLAD import NetVLAD
 
 import pdb
-
-def find_distance(db):
-    vlad1 = db[0]['vlad']
-    vlad2 = db[1]['vlad']
-    vlad3 = db[2]['vlad']
-
-    tmp = []
-    tmp.append(vlad1)
-    tmp.append(vlad3)
-    tmp = np.array(tmp)
-    tmp = tmp.reshape(tmp.shape[0], tmp.shape[2])
-
-    index = faiss.IndexFlatL2(tmp.shape[1])
-    index.is_trained # Output: True
-
-    index.add(tmp)
-    cand_num = 1
-
-    cand_dist, cand_index = index.search(vlad2, cand_num) 
-    print(f"candidate index: {cand_index}, candidate distance: {cand_dist}")
-
 
 if __name__ == '__main__':
     device = 'cuda'
@@ -78,8 +59,26 @@ if __name__ == '__main__':
     # ===========================================================
     print("\033[1;37m========== Calculate VLAD Distance ==========\033[0m")
     start_cal_dist = time.time()
-    find_distance(db)
+    cand_dist, cand_index = find_distance(db)
     print(f"Calculate VLAD Distance: {(time.time() - start_cal_dist)}")
+
+    # [Part 5: Find Feature Matching Method]
+    # ===========================================================
+    img1 = db[1]['image']
+    img2 = db[2]['image']
+    if len(img1.shape) == 3:
+        img1 = cvt_rgb_to_gray(img1)
+    if len(img2.shape) == 3:
+        img2 = cvt_rgb_to_gray(img2)
+
+
+    print(config['descriptor_method']['DAISY'])
+
+
+    pdb.set_trace()
+
+    # [Part 6: Change VINS-Mono Template using ROS]
+    # ===========================================================
 
 
     
