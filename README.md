@@ -1,5 +1,5 @@
 # Rendered Database
-## Make Rendered Database using Rendered Image Obtained by Trained 3D Gaussian Splatting 
+## [Goal] Make Rendered Database using Rendered Image Obtained by Trained 3D Gaussian Splatting 
 ### Get Rendered Image using 3D Gaussian Splatting Rasterization
 - Benchmark Dataset &rarr; Tanks and Temples
 <table>
