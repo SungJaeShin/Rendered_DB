@@ -23,6 +23,9 @@
 4. [Anaconda](https://www.anaconda.com/)
 5. [OpenCV with Contrib](https://github.com/opencv/opencv)
 6. [RoMa](https://github.com/Parskatt/RoMa.git)
+7. [LightGlue](https://github.com/cvg/LightGlue.git)
+8. [SuperPoint](https://github.com/rpautrat/SuperPoint.git)
+9. [Feature Matching](https://github.com/SungJaeShin/Feature_matching.git)
 
 ---
 ### Preparing Dataset (in example folder)
@@ -33,11 +36,34 @@
 ---
 ### Combined Preparing Dataset (Make KeyFrame DB)
 - Using NetVLAD Method to make global descriptor
-  - **KeyFrame = {Index, Image, VLAD, Camera Pose, Camera Type, Camera Params}**
+  - **KeyFrame = {Index, Image, Keypoints, Descriptor(local or global), Camera Pose, Camera Type, Camera Params}**
 
 - Final Database Extension file is HDF5 \
   <img src="./example/plot/results_db_hdf5.png" />
 
+---
+### Method of Keypoint and Descriptor (in `config.yaml`)
+- **extractor_method** (`extractor_utils.py`):
+   - 0 &rarr; apply ORB
+   - 1 &rarr; apply SIFT
+   - 2 &rarr; apply AKAZE
+   - 3 &rarr; apply SuperPoint Model
+   - `roma_based_extractor` function &rarr; apply RoMa Model
+
+- **descriptor_method** (`extractor_utils.py`): 
+   - 0 &rarr; apply ORB
+   - 1 &rarr; apply SURF
+   - 2 &rarr; apply DAISY
+   - 3 &rarr; apply SuperPoint Model
+
+- **matcher_mode** (`matching_utils.py`):
+   - `calculate_score` function &rarr; apply BF Matcher (Brute-Force) + KNN Matches
+   - `roma_based_extractor` function &rarr; apply RoMa Model
+   - `lightglue_matcher` function &rarr; apply LightGlue Model
+
+- **REJECTION_MODE** (include.h):
+   - apply cv2.fundamentalMatrix 
+   
 
 ---
 ### Example Results
