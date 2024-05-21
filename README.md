@@ -62,7 +62,7 @@
    - `roma_based_extractor` function &rarr; apply RoMa Model
    - `lightglue_matcher` function &rarr; apply LightGlue Model
 
-- **REJECTION_MODE** (include.h):
+- **REJECTION_MODE** (using `cv2`):
    - apply cv2.fundamentalMatrix 
    
 
