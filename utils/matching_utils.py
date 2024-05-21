@@ -5,6 +5,8 @@ import faiss
 import cv2 as cv
 import numpy as np
 
+from models.LightGlue import LightGlue
+
 import pdb
 
 # Find N Candidates and Distances
@@ -74,10 +76,35 @@ def calculate_score(query_img, query_kpt, query_des,
         return 0
 
     ### If you want to plot the result then erase annotation code 
-    img_matching_result = cv.drawMatchesKnn(query_img, query_kpt, cand_img, cand_kpt, final_good, None, [0,0,255],flags=2)
-    save_path = '/home/sj/workspace/paper/iccas2024/results/[1] matching_imgs/matching_results.png'
-    cv.imwrite(save_path, img_matching_result)
+    # img_matching_result = cv.drawMatchesKnn(query_img, query_kpt, cand_img, cand_kpt, final_good, None, [0,0,255],flags=2)
+    # save_path = '/home/sj/workspace/paper/iccas2024/results/[1] matching_imgs/matching_results.png'
+    # cv.imwrite(save_path, img_matching_result)
 
     return len(final_good)
 
 # Calculate Relative Pose btw Query and Candidate
+
+# ===================== [ToDo] =====================
+# Not Finish!!!
+def lightglue_matcher(kptsA, kptsB, config, device):
+    # features => SuperPoint, DISK, SIFT, ALIKED
+    matcher = LightGlue(features='superpoint', weight_path=config['lightglue_method']['superpoint_feat']).eval().cuda()  
+
+    # load each image as a torch.Tensor on GPU with shape (3, H, W), normalized in [0,1]
+
+    # Convert matcher input
+    matcher_inputA = [(kp.pt[0], kp.pt[1]) for kp in kptsA]
+    matcher_inputB = [(kp.pt[0], kp.pt[1]) for kp in kptsB]
+
+    kptsA_torch = torch.tensor(matcher_inputA, dtype=torch.float32)
+    kptsB_torch = torch.tensor(matcher_inputB, dtype=torch.float32)
+
+    pdb.set_trace()
+
+
+    # match the features
+    matches01 = matcher({'image0': kptsA_torch, 'image1': kptsB_torch})
+    kptsA, kptsB, matches01 = [rbd(x) for x in [kptsA, kptsB, matches01]]  # remove batch dimension
+    matches = matches01['matches']  # indices with shape (K,2)
+    points0 = kptsA['keypoints'][matches[..., 0]]  # coordinates in image #0, shape (K,2)
+    points1 = kptsB['keypoints'][matches[..., 1]]  # coordinates in image #1, shape (K,2)

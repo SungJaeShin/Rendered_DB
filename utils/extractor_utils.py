@@ -66,8 +66,8 @@ def descriptor_extractor(method, img, kpt):
 
 def roma_based_extractor(img1, img2, db, config, device):
     # Get Pre-trained Model (roma & dino)
-    roma_weights = torch.load(config['learning_method']['outdoor'], map_location=device)
-    dinov2_weights = torch.load(config['learning_method']['dinov2'], map_location=device)
+    roma_weights = torch.load(config['roma_method']['outdoor'], map_location=device)
+    dinov2_weights = torch.load(config['roma_method']['dinov2'], map_location=device)
     
     # Set basic model parameter
     coarse_res = (560, 560)
@@ -113,31 +113,27 @@ def roma_based_extractor(img1, img2, db, config, device):
     kptsA = kptsA[mask.ravel()==1]
     kptsB = kptsB[mask.ravel()==1]
     
-    # Eamples 
-    # ============================================ 
-    # use numpy to convert the pil_image into a numpy array
-    numpy_image1 = np.array(im1)  
-    numpy_image2 = np.array(im2)  
+    # # Eamples 
+    # # ============================================ 
+    # # use numpy to convert the pil_image into a numpy array
+    # numpy_image1 = np.array(im1)  
+    # numpy_image2 = np.array(im2)  
         
-    # convert to a openCV2 image and convert from RGB to BGR format
-    cv_image1 = cv.cvtColor(numpy_image1, cv.COLOR_RGB2BGR)
-    cv_image2 = cv.cvtColor(numpy_image2, cv.COLOR_RGB2BGR)
+    # # convert to a openCV2 image and convert from RGB to BGR format
+    # cv_image1 = cv.cvtColor(numpy_image1, cv.COLOR_RGB2BGR)
+    # cv_image2 = cv.cvtColor(numpy_image2, cv.COLOR_RGB2BGR)
         
-    # ================= Move feature points for plotting correspondence pair  ================= #
-    # Get each image row & column
-    rows1, cols1 = cv_image1.shape[:2]
-    rows2, cols2 = cv_image2.shape[:2]
-    kptsC = np.array(kptsB.cpu()) + [cols1, 0]
+    # # Visualization
+    # rows1, cols1 = cv_image1.shape[:2]
+    # rows2, cols2 = cv_image2.shape[:2]
+    # kptsC = np.array(kptsB.cpu()) + [cols1, 0]
         
-    output_img = Image.new("RGB", (im1.width + im2.width, im1.height))
-    output_img.paste(im1, (0, 0))
-    output_img.paste(im2, (im1.width, 0))
+    # output_img = Image.new("RGB", (im1.width + im2.width, im1.height))
+    # output_img.paste(im1, (0, 0))
+    # output_img.paste(im2, (im1.width, 0))
 
-    draw_correspondences(output_img, np.array(kptsA.cpu()), kptsC)
-
-
-    pdb.set_trace()
-
+    # draw_correspondences(output_img, np.array(kptsA.cpu()), kptsC)
+    # # ============================================ 
 
     return kptsA, kptsB, warp, matches
 

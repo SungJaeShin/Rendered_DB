@@ -20,11 +20,16 @@ descriptor_method:
   DAISY: 2
   AKAZE: 3
 
-learning_method:
+roma_method:
   is_use: True
   indoor: '/home/sj/workspace/paper/iccas2024/pre_trained/roma_indoor.pth'
   outdoor: '/home/sj/workspace/paper/iccas2024/pre_trained/roma_outdoor.pth'
   dinov2: '/home/sj/workspace/paper/iccas2024/pre_trained/dinov2_vitl14_pretrain.pth'
+
+lightglue_method:
+  sift_feat: '/home/sj/workspace/paper/iccas2024/pre_trained/sift_lightglue.pth'
+  disk_feat: '/home/sj/workspace/paper/iccas2024/pre_trained/disk_lightglue.pth'
+  superpoint_feat: '/home/sj/workspace/paper/iccas2024/pre_trained/superpoint_lightglue.pth'
 
 
 data:

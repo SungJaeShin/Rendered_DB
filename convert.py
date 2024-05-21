@@ -20,9 +20,10 @@ from std_msgs.msg import Header
 from utils.args_utils import *
 from utils.gen_db_utils import make_render_dataset
 from utils.save_utils import save_render_dataset
-from utils.matching_utils import find_distance, calculate_score
+from utils.matching_utils import find_distance, calculate_score, lightglue_matcher
 from utils.extractor_utils import cvt_rgb_to_gray, feature_extractor, descriptor_extractor, roma_based_extractor
 from dataset.transforms import *
+
 from models.NetVLAD import NetVLAD
 
 import pdb
@@ -71,7 +72,10 @@ if __name__ == '__main__':
     # if len(img2.shape) == 3:
     #     img2 = cvt_rgb_to_gray(img2)
 
-    img1_kpt, img2_kpt, warp, matches = roma_based_extractor(img1, img2, db, config, device)
+    img1_kpt = feature_extractor(config['extractor_method']['ORB'], img1)
+    img2_kpt = feature_extractor(config['extractor_method']['ORB'], img2)
+
+    lightglue_matcher(img1_kpt, img2_kpt, config, device)
 
 
     pdb.set_trace()
