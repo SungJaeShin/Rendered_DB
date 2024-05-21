@@ -22,6 +22,7 @@
 3. [Faiss](https://github.com/facebookresearch/faiss)
 4. [Anaconda](https://www.anaconda.com/)
 5. [OpenCV with Contrib](https://github.com/opencv/opencv)
+6. [RoMa](https://github.com/Parskatt/RoMa.git)
 
 ---
 ### Preparing Dataset (in example folder)
@@ -39,5 +40,20 @@
 
 
 ---
-### Example Results (Find the Nearest Distance using Faiss obtained by VLAD vector)
-<img src="./example/plot/results.png" width="600" height="400"/>
+### Example Results
+- (1) Find the Nearest Distance using Faiss obtained by VLAD vector (Find Candidates)
+      <img src="./example/plot/results.png" width="600" height="400"/>
+
+- (2) Find Feature Matching using Local Descriptor (Finda the Best Candidates)
+      <table>
+            <tr>
+               <td> Matching Results (ORB + DAISY + distance=0.99) </td>
+               <td> Matching Results (RoMa indoor + reproj=0.01) </td>
+            </tr> 
+            <tr>
+               <td> <img src="./example/results/matching_results_0.99.png" /> </td>
+               <td> <img src="./example/results/matching_results_RoMa_reproj_0.01.PNG" />  </td>
+            </tr>
+      </table>
+
+
