@@ -10,10 +10,10 @@ from warnings import warn
 from PIL import Image
 
 # import roma
-from roma.utils.utils import get_tuple_transform_ops
-from roma.utils.local_correlation import local_correlation
-from roma.utils.utils import cls_to_flow_refine
-from roma.utils.kde import kde
+from models.roma.utils.utils import get_tuple_transform_ops
+from models.roma.utils.local_correlation import local_correlation
+from models.roma.utils.utils import cls_to_flow_refine
+from models.roma.utils.kde import kde
 
 class ConvRefiner(nn.Module):
     def __init__(
@@ -628,8 +628,11 @@ class RegressionMatcher(nn.Module):
         with torch.no_grad():
             if not batched:
                 b = 1
-                w, h = im_A.size
-                w2, h2 = im_B.size
+                w, h = im_A.size if isinstance(im_A, Image.Image) else im_A.shape[1:]
+                w2, h2 = im_B.size if isinstance(im_B, Image.Image) else im_B.shape[1:]
+                ### [Original Codes]
+                # w, h = im_A.size
+                # w2, h2 = im_B.size
                 # Get images in good format
                 ws = self.w_resized
                 hs = self.h_resized
@@ -678,7 +681,13 @@ class RegressionMatcher(nn.Module):
                     im_B = self.recrop(certainty[1,0], im_B_path)
                     #TODO: need to adjust corresps when doing this
                 else:
-                    im_A, im_B = Image.open(im_A_path).convert("RGB"), Image.open(im_B_path).convert("RGB")
+                    if isinstance(im_A_path, (str, os.PathLike)):
+                        im_A, im_B = Image.open(im_A_path).convert("RGB"), Image.open(im_B_path).convert("RGB")
+                    else:
+                        # Assume its not a path
+                        im_A, im_B = im_A_path, im_B_path
+                    ### [Original Code]
+                    # im_A, im_B = Image.open(im_A_path).convert("RGB"), Image.open(im_B_path).convert("RGB")
                 im_A, im_B = test_transform((im_A, im_B))
                 im_A, im_B = im_A[None].to(device), im_B[None].to(device)
                 scale_factor = math.sqrt(self.upsample_res[0] * self.upsample_res[1] / (self.w_resized * self.h_resized))
@@ -767,6 +776,6 @@ class RegressionMatcher(nn.Module):
             white_im = torch.ones((H, W), device = device)
         vis_im = certainty * warp_im + (1 - certainty) * white_im
         if save_path is not None:
-            from roma.utils import tensor_to_pil
+            from roma.utils.utils import tensor_to_pil
             tensor_to_pil(vis_im, unnormalize=unnormalize).save(save_path)
         return vis_im

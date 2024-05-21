@@ -21,7 +21,7 @@ from utils.args_utils import *
 from utils.gen_db_utils import make_render_dataset
 from utils.save_utils import save_render_dataset
 from utils.matching_utils import find_distance, calculate_score
-from utils.extractor_utils import feature_extractor, descriptor_extractor, roma_based_extractor
+from utils.extractor_utils import cvt_rgb_to_gray, feature_extractor, descriptor_extractor, roma_based_extractor
 from dataset.transforms import *
 from models.NetVLAD import NetVLAD
 
@@ -66,13 +66,12 @@ if __name__ == '__main__':
     # ===========================================================
     img1 = db[1]['image']
     img2 = db[2]['image']
-    if len(img1.shape) == 3:
-        img1 = cvt_rgb_to_gray(img1)
-    if len(img2.shape) == 3:
-        img2 = cvt_rgb_to_gray(img2)
+    # if len(img1.shape) == 3:
+    #     img1 = cvt_rgb_to_gray(img1)
+    # if len(img2.shape) == 3:
+    #     img2 = cvt_rgb_to_gray(img2)
 
-
-    print(config['descriptor_method']['DAISY'])
+    img1_kpt, img2_kpt, warp, matches = roma_based_extractor(img1, img2, db, config, device)
 
 
     pdb.set_trace()

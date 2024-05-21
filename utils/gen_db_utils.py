@@ -44,6 +44,7 @@ def make_render_dataset(model, data_path, transforms=None):
 
             render_dataset.append({
                 'idx': i,
+                'img_path': imgs[i],
                 'image': cur_img,
                 'vlad': cur_img_vlad,
                 'gt_pose': np.array(gt_poses[gt_idx].split()[1:8], dtype=np.float32),
