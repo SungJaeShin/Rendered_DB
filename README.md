@@ -48,10 +48,14 @@
       <table>
             <tr>
                <td> Matching Results (ORB + DAISY + distance=0.99) </td>
-               <td> Matching Results (RoMa indoor + reproj=0.01) </td>
             </tr> 
             <tr>
                <td> <img src="./example/results/matching_results_0.99.png" /> </td>
+            </tr>
+            <tr>
+               <td> Matching Results (RoMa indoor + reproj=0.01) </td>
+            </tr>
+            <tr>
                <td> <img src="./example/results/matching_results_RoMa_reproj_0.01.PNG" />  </td>
             </tr>
       </table>
