@@ -12,6 +12,7 @@ import PIL
 from PIL import Image
 from skimage.feature import daisy
 from models.RoMa import roma_model
+from models.SuperPoint import SuperPoint
 
 from .visualize_utils import draw_keypoints_on_image, draw_correspondences
 
@@ -22,19 +23,27 @@ def cvt_rgb_to_gray(img):
     return gray
 
 # Default extract method is ORB
-def feature_extractor(method, img):
-    # [ORB Feature Method]
-    orb = cv.ORB_create()
-    img_kpt = orb.detect(img)
+def feature_extractor(method, img, path=None):    
+    gray_img = cvt_rgb_to_gray(img) if len(img.shape) == 3 else img
 
+    img_kpt = None
+    # [ORB Feature Method]
+    if method == 0:
+        orb = cv.ORB_create()
+        img_kpt = orb.detect(gray_img)
     # [SIFT Feature Method]
     if method == 1:
         sift = cv.SIFT_create()
-        img_kpt = sift.detect(img, None)
+        img_kpt = sift.detect(gray_img, None)
     # [AKAZE Feature Method]
     if method == 2:
         akaze = cv.AKAZE_create()
-        img_kpt = akaze.detect(img)
+        img_kpt = akaze.detect(gray_img)
+    # [SuperPoint Feature Method] => output dim = (# of features, 2)
+    if method == 3:
+        kpt = suerpoint_based_extractor(gray_img, path)['keypoints']
+        list_kpt = [tensor.cpu().numpy() for tensor in kpt]
+        img_kpt = np.concatenate(list_kpt, axis=0)
 
     return img_kpt
 
@@ -45,24 +54,47 @@ def compute_daisy_descriptors(image, keypoints):
     key_descriptors = [descriptors[pt[1], pt[0]] for pt in keypoints if 0 <= pt[0] < image.shape[1] and 0 <= pt[1] < image.shape[0]]
     return np.array(key_descriptors, dtype=np.float32)
 
-def descriptor_extractor(method, img, kpt):
+def descriptor_extractor(method, img, kpt, path=None):
+    gray_img = cvt_rgb_to_gray(img) if len(img.shape) == 3 else img
+
+    img_des = None
     # [ORB Descriptor Method]
-    orb = cv.ORB_create()
-    _, img_des = orb.detectAndCompute(img, None)
-    
+    if method == 0:
+        orb = cv.ORB_create()
+        _, img_des = orb.detectAndCompute(gray_img, None)
     # [Patented SURF Method] (Not Use)
     if method == 1:
         surf = cv.xfeatures2d.SURF_create()
-        _, img_des = surf.compute(img, kpt)
+        _, img_des = surf.compute(gray_img, kpt)
     # [DAISY Descriptor Method]
     if method == 2:
-        img_des = compute_daisy_descriptors(img, kpt)
+        img_des = compute_daisy_descriptors(gray_img, kpt)
     # [AKAZE Descriptor Method]
     if method == 3:
         akaze = cv.AKAZE_create()
-        _, img_des = akaze.compute(img, kpt)
+        _, img_des = akaze.compute(gray_img, kpt)
+    # [SuperPoint Feature Method] => output dim = (256, # of features)
+    if method == 4:
+        des = suerpoint_based_extractor(gray_img, path)['descriptors']
+        list_des = [tensor.detach().cpu().numpy() for tensor in des]
+        img_des = np.concatenate(list_des, axis=0)
 
     return img_des
+
+def suerpoint_based_extractor(img, path):
+    gray_img = cvt_rgb_to_gray(img) if len(img.shape) == 3 else img
+
+    superpoint_config = {
+        'descriptor_dim': 256,
+        'nms_radius': 4,
+        'keypoint_threshold': 0.005,
+        'max_keypoints': 2048,
+        'remove_borders': 4,
+    }
+    model = SuperPoint(config=superpoint_config, weight_path=path).eval().cuda() 
+    model_input_img = torch.from_numpy(gray_img).float().unsqueeze(0).unsqueeze(0).cuda() / 255.0
+
+    return model({'image': model_input_img})
 
 def roma_based_extractor(img1, img2, db, config, device):
     # Get Pre-trained Model (roma & dino)

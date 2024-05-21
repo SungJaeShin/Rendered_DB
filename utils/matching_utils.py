@@ -4,7 +4,9 @@ import h5py
 import faiss
 import cv2 as cv
 import numpy as np
+from PIL import Image, ImageDraw
 
+from utils.visualize_utils import *
 from models.LightGlue import LightGlue
 
 import pdb
@@ -86,25 +88,54 @@ def calculate_score(query_img, query_kpt, query_des,
 
 # ===================== [ToDo] =====================
 # Not Finish!!!
-def lightglue_matcher(kptsA, kptsB, config, device):
+def lightglue_matcher(imgA, imgB, kptsA, kptsB, desA, desB, config, device):
     # features => SuperPoint, DISK, SIFT, ALIKED
     matcher = LightGlue(features='superpoint', weight_path=config['lightglue_method']['superpoint_feat']).eval().cuda()  
 
-    # load each image as a torch.Tensor on GPU with shape (3, H, W), normalized in [0,1]
+    # Change Keypoints Dim
+    img1_kpt = kptsA.reshape(1, kptsA.shape[0], kptsA.shape[1])
+    img2_kpt = kptsB.reshape(1, kptsB.shape[0], kptsB.shape[1])
+    
+    # Change Descriptors Dim
+    img1_des = desA.T
+    img1_des = img1_des.reshape(1, img1_des.shape[0], img1_des.shape[1])
+    img2_des = desB.T
+    img2_des = img2_des.reshape(1, img2_des.shape[0], img2_des.shape[1])
 
-    # Convert matcher input
-    matcher_inputA = [(kp.pt[0], kp.pt[1]) for kp in kptsA]
-    matcher_inputB = [(kp.pt[0], kp.pt[1]) for kp in kptsB]
+    # Change Images Dim
+    img1 = np.transpose(imgA, (2, 0, 1))  # (H, W, C) -> (C, H, W)
+    img1 = img1[np.newaxis, ...]  # (C, H, W) -> (1, C, H, W)
+    img2 = np.transpose(imgB, (2, 0, 1))  # (H, W, C) -> (C, H, W)
+    img2 = img2[np.newaxis, ...]  # (C, H, W) -> (1, C, H, W)
 
-    kptsA_torch = torch.tensor(matcher_inputA, dtype=torch.float32)
-    kptsB_torch = torch.tensor(matcher_inputB, dtype=torch.float32)
+    # Convert to torch.Tensor
+    img1_kpt = torch.tensor(img1_kpt).float().cuda()
+    img2_kpt = torch.tensor(img2_kpt).float().cuda()
+    img1_des = torch.tensor(img1_des).float().cuda()
+    img2_des = torch.tensor(img2_des).float().cuda()
+    img1 = torch.tensor(img1).float().cuda()
+    img2 = torch.tensor(img2).float().cuda()
 
-    pdb.set_trace()
+    # Make dict format
+    feat_img1 = {'keypoints': img1_kpt, 'descriptors': img1_des, 'image': img1}
+    feat_img2 = {'keypoints': img2_kpt, 'descriptors': img2_des, 'image': img2}
 
-
-    # match the features
-    matches01 = matcher({'image0': kptsA_torch, 'image1': kptsB_torch})
-    kptsA, kptsB, matches01 = [rbd(x) for x in [kptsA, kptsB, matches01]]  # remove batch dimension
+    # Matcher output => matches0 matches1 matching_scores0 matching_scores1 stop matches scores
+    matches01 = matcher({'image0': feat_img1, 'image1': feat_img2})
+    # kptsA, kptsB, matches01 = [rbd(x) for x in [feat_img1, feat_img2, matches01]]  # remove batch dimension
     matches = matches01['matches']  # indices with shape (K,2)
-    points0 = kptsA['keypoints'][matches[..., 0]]  # coordinates in image #0, shape (K,2)
-    points1 = kptsB['keypoints'][matches[..., 1]]  # coordinates in image #1, shape (K,2)
+    
+    # Get Inlier Features 
+    list_matches = [tensor.cpu().numpy() for tensor in matches]
+    np_matches = np.concatenate(list_matches, axis=0)
+    pointsA = kptsA[np_matches[..., 0]]  # coordinates in image #0, shape (K,2)
+    pointsB = kptsB[np_matches[..., 1]]  # coordinates in image #1, shape (K,2)
+
+    # # Not Finish!!!
+    # imgA_pil = Image.fromarray(imgA)
+    # draw_keypoints_on_image(imgA_pil, pointsA)
+    # imgB_pil = Image.fromarray(imgB)
+    # draw_keypoints_on_image(imgB_pil, pointsB)
+
+    # pdb.set_trace()
+

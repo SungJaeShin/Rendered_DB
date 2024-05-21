@@ -108,7 +108,7 @@ class SuperPoint(nn.Module):
         'remove_borders': 4,
     }
 
-    def __init__(self, config):
+    def __init__(self, config, weight_path=None):
         super().__init__()
         self.config = {**self.default_config, **config}
 
@@ -133,14 +133,11 @@ class SuperPoint(nn.Module):
             c5, self.config['descriptor_dim'],
             kernel_size=1, stride=1, padding=0)
 
-        path = Path(__file__).parent / 'weights/superpoint_v1.pth'
-        self.load_state_dict(torch.load(str(path)))
+        self.load_state_dict(torch.load(str(weight_path)))
 
         mk = self.config['max_keypoints']
         if mk == 0 or mk < -1:
             raise ValueError('\"max_keypoints\" must be positive or \"-1\"')
-
-        print('Loaded SuperPoint model')
 
     def forward(self, data):
         """ Compute keypoints, scores, descriptors for image """

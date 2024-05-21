@@ -13,15 +13,18 @@ extractor_method:
   ORB: 0
   SIFT: 1
   AKAZE: 2
+  SuperPoint: 3
 
 descriptor_method:
   ORB: 0
   SURF: 1
   DAISY: 2
   AKAZE: 3
+  SuperPoint: 4
+
+pt_superpoint_path: '/home/sj/workspace/paper/iccas2024/pre_trained/superpoint_v1.pth'
 
 roma_method:
-  is_use: True
   indoor: '/home/sj/workspace/paper/iccas2024/pre_trained/roma_indoor.pth'
   outdoor: '/home/sj/workspace/paper/iccas2024/pre_trained/roma_outdoor.pth'
   dinov2: '/home/sj/workspace/paper/iccas2024/pre_trained/dinov2_vitl14_pretrain.pth'
