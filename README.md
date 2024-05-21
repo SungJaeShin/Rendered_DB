@@ -54,7 +54,8 @@
    - 0 &rarr; apply ORB
    - 1 &rarr; apply SURF
    - 2 &rarr; apply DAISY
-   - 3 &rarr; apply SuperPoint Model
+   - 3 &rarr; apply AKAZE
+   - 4 &rarr; apply SuperPoint Model
 
 - **matcher_mode** (`matching_utils.py`):
    - `calculate_score` function &rarr; apply BF Matcher (Brute-Force) + KNN Matches
