@@ -28,6 +28,11 @@
 9. [Feature Matching](https://github.com/SungJaeShin/Feature_matching.git)
 
 ---
+### Download pre-trained model
+Download pre-trained model
+- https://drive.google.com/drive/folders/1vhsYBUaxEPKSiBWgKTnHsH700aiTtPjA?usp=sharing
+
+---
 ### Preparing Dataset (in example folder)
 (1) cameras.txt &rarr; [IMAGE_ID, CAMERA TYPE, IMAGE Width, IMAGE HEIGHT, ~] \
 (2) images.txt &rarr; [IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, NAME] \
